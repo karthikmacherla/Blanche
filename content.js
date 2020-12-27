@@ -3,33 +3,44 @@ const modalView = "views/html/modal.html";
 //content.js
 chrome.runtime.onMessage.addListener((request) => {
   if (request.type === 'spotlight-search-msg') {
-    showModal();
+    createModal();
+  } else if (request.type == "spotlight-search-close-msg") {
+    destroyModal();
   }
 });
 
-const showModal = function () {
-  const modal = document.createElement("dialog");
+/**
+ * Creates the spotlight search modal
+ */
+function createModal() {
+  const modal = document.createElement("div");
   modal.setAttribute(
     "style", `
-      height:450px;
+      height:100px;
+      left: 25%;
+      right: 25%;
       border: none;
-      top:150px;
-      border-radius:20px;
+      top:10%;
+      border-radius:7px;
       background-color:white;
-      position: fixed; box-shadow: 0px 12px 48px rgba(29, 5, 64, 0.32);
+      position: fixed; 
+      box-shadow: 0px 12px 48px rgba(29, 5, 64, 0.32);
     `
   );
-  modal.innerHTML = `<iframe id="popup-content"; style="height:100%"></iframe>
-  <div style="position:absolute; top:0px; left:5px;">
-  <button style="padding: 8px 12px; font-size: 16px; border: none; border-radius: 20px;">x</button>
-  </div>`;
+  modal.setAttribute("id", "modal-container");
+  modal.innerHTML = `<iframe id="popup-content"; style="height:100%"></iframe>`;
   document.body.appendChild(modal);
-  const dialog = document.querySelector("dialog");
-  dialog.showModal();
   const iframe = document.getElementById("popup-content");
   iframe.src = chrome.runtime.getURL(modalView);
   iframe.frameBorder = 0;
-  dialog.querySelector("button").addEventListener("click", () => {
-    dialog.close();
-  });
+}
+
+/**
+ * Destroys the spotlight search model if it exists
+ */
+function destroyModal() {
+  console.log("Destroying modal");
+
+  let elem = document.getElementById("modal-container");
+  elem.remove();
 }
