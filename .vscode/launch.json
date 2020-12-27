@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome",
+      "url": "https://example.com",
+      // Here it is!
+      "runtimeArgs": [
+        "--load-extension=${workspaceFolder}"
+      ]
+    }
+  ]
+}

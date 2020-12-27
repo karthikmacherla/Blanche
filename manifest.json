@@ -1,0 +1,48 @@
+{
+  "manifest_version": 2,
+  "name": "Spotlight Search",
+  "description": "Spotlight search for chrome tabs",
+  "version": "1.0",
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
+  "browser_action": {
+    "name": "Toggle spotlight search"
+  },
+  "web_accessible_resources": [
+    "views/*"
+  ],
+  "commands": {
+    "open-search-bar": {
+      "suggested_key": {
+        "default": "Ctrl+K",
+        "mac": "Command+K"
+      },
+      "description": "Toggle spotlight search"
+    },
+    "_execute_browser_action": {
+      "suggested_key": {
+        "windows": "Ctrl+K",
+        "mac": "Command+K"
+      }
+    }
+  },
+  "content_security_policy": "script-src 'self' 'sha256-/13BBW2yQVtpCsBV7JiO23y7pwEFFUobOzefJ27Nltg='; object-src 'self'"
+}
