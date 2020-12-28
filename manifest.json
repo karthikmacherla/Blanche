@@ -9,6 +9,9 @@
   ],
   "content_scripts": [
     {
+      "css": [
+        "views/css/custom.css"
+      ],
       "js": [
         "content.js"
       ],

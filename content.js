@@ -1,54 +1,57 @@
-const modalView = "views/html/modal.html";
+const MODAL_VIEW = "views/html/modal.html";
+const MODAL_ID = "sp-modal-search-container";
+const MODAL_CLASS = "sp-modal-search-class";
 
 //content.js
 chrome.runtime.onMessage.addListener((request) => {
-  if (request.type === 'spotlight-search-msg') {
-    createModal();
-  } else if (request.type == "spotlight-search-close-msg") {
+  if (modalExists()) {
     destroyModal();
+  } else {
+    createModal();
   }
 });
 
 /**
- * Creates the spotlight search modal
- * @relevant "modal-container" is the id of the popup
+ * Create modal:
+ * 1. Create div container + add to screen
+ * 2. Get html contents from modal.html
+ * 3. Make div a shadow. Add (2) to inner html
+ * 4. put everything on the screen.
  */
+
 function createModal() {
-  // Styling the container holding the iframe itself
-  const modal = document.createElement("div");
-  modal.setAttribute(
-    "style", `
-      padding: 7px;
-      margin: initial;
-      height:100px;
-      left: 25%;
-      right: 25%;
-      border: none;
-      top:10%;
-      -webkit-border-radius:7px;
-      background-color:white;
-      position: fixed; 
-      box-shadow: 0px 12px 48px rgba(29, 5, 64, 0.32);
-    `
-  );
-  /* TODO: Figure out how to fill the div completely */
-  modal.setAttribute("id", "modal-container");
-  modal.innerHTML = `<iframe id="popup-content"; 
-    style="
-      height:100%;
-      width: 100%;
-      "></iframe>`;
-  //add everything to the screen
-  document.body.appendChild(modal);
-  const iframe = document.getElementById("popup-content");
-  iframe.src = chrome.runtime.getURL(modalView);
-  iframe.frameBorder = 0;
+  var url = chrome.runtime.getURL(MODAL_VIEW);
+  fetch(url)
+    .then(response => {
+      /* convert to text */
+      return response.text();
+    })
+    .then(text => {
+      // Convert the HTML string into a document object
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(text, 'text/html');
 
-  /* TODO: Focus search bar on open */
-  var searchBar = iframe.contentWindow.document.getElementById("search-bar");
+      // Get the status bar element
+      var statusBar = doc.getElementById('search-bar-complete');
+      return statusBar;
+    })
+    .then(elem => {
+      // create the shadow element and append the element to the screen
+      const modal = document.createElement("div");
+      modal.setAttribute("class", MODAL_CLASS);
+      modal.setAttribute("id", MODAL_ID);
+      var shadow = modal.attachShadow({ mode: 'open' });
+      shadow.innerHTML = elem.innerHTML;
+      document.body.appendChild(modal);
 
-  iframe.contentWindow.focus();
-  searchBar.focus();
+      //REMEMBER TO FOCUS SEARCH BAR AFTER APPENDING
+      shadow.getElementById("sp-search-bar").focus();
+    })
+    .catch(err => {
+      // handle error
+      console.log("Error Fetching: " + err);
+    });
+
 }
 
 /**
@@ -58,6 +61,11 @@ function createModal() {
 function destroyModal() {
   console.log("Destroying modal");
 
-  let elem = document.getElementById("modal-container");
+  let elem = document.getElementById(MODAL_ID);
   elem.remove();
+}
+
+
+function modalExists() {
+  return document.getElementById(MODAL_ID);
 }
