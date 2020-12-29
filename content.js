@@ -3,27 +3,36 @@ const SEARCHBAR_CSS = "style/searchBar.css";
 const SEARCHBAR_SCRIPT = "searchBar.js";
 const MODAL_ID = "sp-modal-search-container";
 const MODAL_CLASS = "sp-modal-search-class";
+const SEARCHBAR_ID = "sp-search-bar";
 
 var tabPort = chrome.runtime.connect({ name: "tab-info" });
-tabPort.onMessage.addListener((msg) => {
-  console.log("Recieved a message via the tab-info port\n", msg);
-});
 
-//content.js
+/**
+ * Message listener used to respond to cmd shortcuts. 
+ * 
+ * Opens the search bar when the right command is sent
+ */
 chrome.runtime.onMessage.addListener((request) => {
   if (request.type == "spotlight-search-msg")
     handleModal();
 });
 
-//send message and bind a callback response
-//long lived connections: post message, let addListener do work 
-
+/**
+ * Appropriately opens and closes modal based on presence on screen
+ */
 function handleModal() {
   if (modalExists()) {
     destroyModal();
   } else {
     createModal();
   }
+}
+
+/**
+ * Checks if the modal exists
+ */
+function modalExists() {
+  return document.getElementById(MODAL_ID);
 }
 
 /**
@@ -73,10 +82,11 @@ function createModal() {
       document.body.appendChild(modal);
 
       //REMEMBER TO FOCUS SEARCH BAR AFTER APPENDING
-      shadow.getElementById("sp-search-bar").focus();
+      shadow.getElementById(SEARCHBAR_ID).focus();
     })
     .then(() => {
-      addSearchResults();
+      registerSearchBarEvent();
+      updateSearchResults();
     })
     .catch(err => {
       // handle error
@@ -96,20 +106,30 @@ function destroyModal() {
 }
 
 /**
- * Checks if the modal exists
+ * Adds change listener to search bar to update search results
  */
-function modalExists() {
-  return document.getElementById(MODAL_ID);
+function registerSearchBarEvent() {
+  const searchContainer = document.getElementById(MODAL_ID).shadowRoot;
+  var searchBar = searchContainer.getElementById(SEARCHBAR_ID);
+
+  searchBar.addEventListener("input", (e) => {
+    var query = searchBar.value;
+    console.log("Search value: ", query);
+    updateSearchResults(false, query);
+  })
 }
 
-
-// load -> add all data
-// typing -> clear and refresh with updated 
-function addSearchResults() {
-  // const searchContainer = document.getElementById(MODAL_ID).shadowRoot;
-
-  // console.log("Search container:\n", searchContainer);
-  // //getTabInfo();
-
-  tabPort.postMessage({ tabs: "Get em now" });
+/**
+ * Sends a message to start the chain of updating tab data
+ */
+function updateSearchResults(inital = true, query = "") {
+  tabPort.postMessage({ initial: inital, query: query });
 }
+
+/**
+ * Receives response with tab data and renders to screen.
+ */
+tabPort.onMessage.addListener((msg) => {
+  console.log("Recieved a message via the tab-info port\n", msg);
+});
+

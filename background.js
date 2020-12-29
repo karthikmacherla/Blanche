@@ -27,7 +27,13 @@ chrome.runtime.onConnect.addListener(function (port) {
   console.assert(port.name == "tab-info");
   port.onMessage.addListener(function (msg) {
     chrome.tabs.getAllInWindow((tabs) => {
-      port.postMessage({ tabs: tabs });
+      var res;
+      if (msg.initial) {
+        res = tabs;
+      } else {
+        res = tabs;
+      }
+      port.postMessage({ tabs: res });
     })
   });
 });
