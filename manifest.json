@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "css": [
-        "views/css/custom.css"
+        "style/base.css"
       ],
       "js": [
         "content.js"
@@ -30,7 +30,9 @@
     "name": "Toggle spotlight search"
   },
   "web_accessible_resources": [
-    "views/*"
+    "templates/*",
+    "style/*",
+    "searchBar.js"
   ],
   "commands": {
     "open-search-bar": {

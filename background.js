@@ -17,3 +17,17 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     chrome.tabs.sendMessage(tabs[0].id, { type: "spotlight-search-msg" });
   });
 });
+
+
+/**
+ * Responses to requests for tab data
+ * @relevant request looks like {  }
+ */
+chrome.runtime.onConnect.addListener(function (port) {
+  console.assert(port.name == "tab-info");
+  port.onMessage.addListener(function (msg) {
+    chrome.tabs.getAllInWindow((tabs) => {
+      port.postMessage({ tabs: tabs });
+    })
+  });
+});

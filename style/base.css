@@ -6,12 +6,12 @@
   all:revert;
 }
 
-
 #sp-modal-search-container {
-  padding: 7px;
+  padding-top: 7px;
+  padding-bottom: 7px;
   z-index: 2147483647;
   margin: initial;
-  height:100px;
+  height: auto;
   left: 25%;
   right: 25%;
   border: none;
