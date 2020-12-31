@@ -85,7 +85,7 @@ function createModal() {
       shadow.getElementById(SEARCHBAR_ID).focus();
     })
     .then(() => {
-      registerSearchBarEvent();
+      registerSearchBarEvents();
       updateSearchResults();
     })
     .catch(err => {
@@ -108,7 +108,7 @@ function destroyModal() {
 /**
  * Adds change listener to search bar to update search results
  */
-function registerSearchBarEvent() {
+function registerSearchBarEvents() {
   const searchContainer = document.getElementById(MODAL_ID).shadowRoot;
   var searchBar = searchContainer.getElementById(SEARCHBAR_ID);
 
@@ -117,6 +117,77 @@ function registerSearchBarEvent() {
     console.log("Search value: ", query);
     updateSearchResults(false, query);
   })
+
+  searchContainer.addEventListener("keydown", (e) => {
+    if (e.keyCode == 38) {
+      tabSearchResultsUp();
+    } else if (e.keyCode == 40) {
+      tabSearchResultsDown();
+    }
+  })
+}
+
+function tabSearchResultsUp() {
+  const searchContainer = document.getElementById(MODAL_ID).shadowRoot;
+
+  var curr = searchContainer.querySelector(".selected");
+  // Set the bottom to be the selected automatically
+  if (curr == null) {
+    var results = searchContainer.querySelectorAll(".search-result");
+
+    if (results.length < 1)
+      return;
+    var last = results[results.length - 1];
+    last.classList.add("selected");
+    return;
+  }
+
+  // try to move one result up
+  var prev = curr.previousElementSibling.previousElementSibling;
+  // we went over the top
+  if (!prev.classList.contains("search-result")) {
+    curr.classList.remove("selected");
+
+    var results = searchContainer.querySelectorAll(".search-result");
+
+    if (results.length < 1)
+      return;
+    var last = results[results.length - 1];
+    last.classList.add("selected");
+  } else {
+    curr.classList.remove("selected");
+    prev.classList.add("selected");
+  }
+}
+
+function tabSearchResultsDown() {
+  const searchContainer = document.getElementById(MODAL_ID).shadowRoot;
+
+  var curr = searchContainer.querySelector(".selected");
+  // Set the top to be the selected automatically
+  if (curr == null) {
+    var result = searchContainer.querySelector(".search-result");
+    if (result == null)
+      return;
+
+    result.classList.add("selected");
+    return;
+  }
+
+  // try to move one result down
+  var next = curr.nextElementSibling.nextElementSibling;
+  // we went too low
+  if (!next.classList.contains("search-result")) {
+    curr.classList.remove("selected");
+    var result = searchContainer.querySelector(".search-result");
+    if (result == null)
+      return;
+
+    result.classList.add("selected");
+  } else {
+    curr.classList.remove("selected");
+    next.classList.add("selected");
+  }
 }
 
 /**
@@ -132,4 +203,3 @@ function updateSearchResults(inital = true, query = "") {
 tabPort.onMessage.addListener((msg) => {
   console.log("Recieved a message via the tab-info port\n", msg);
 });
-

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../style/searchBar.css">
   <title>Document</title>
 </head>
 <body>
@@ -10,13 +11,36 @@
   <br>
     <div id="search-bar-complete">
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-      <div class="search-block">
+      <div class="search-block" tabindex=1>
         <!-- scraping the content out -->
-        <input type="text" id="sp-search-bar" tabindex=1 autofocus placeholder="Search here ...">
+        <input type="text" id="sp-search-bar" autofocus placeholder="Search here ...">
       </div>
-      <div class="results-block">
+      <hr>
+      <div class="search-result" tabindex=2>
+        <img src="https://www.youtube.com/s/desktop/d743f786/img/favicon_32.png"> 
+        <div class="search-results-content">
+           <h6> Youtube - a place to make great friends and watch really cool content. Potato sdkjsljkds slkdjsldjk slkdjsd dlksjdlksj slkdjsldkjds lskd lsjkdls lskjd sljk sdlj </h6>
+           <p> heyo</p>
+        </div>
       </div>
-    </div> 
+      <hr>
+      <div class="search-result" tabindex=3>
+        <img src="https://www.youtube.com/s/desktop/d743f786/img/favicon_32.png"> 
+        <div class="search-results-content">
+           <h6> Youtube - a place to make great friends and watch really cool content. Potato sdkjsljkds slkdjsldjk slkdjsd dlksjdlksj slkdjsldkjds lskd lsjkdls lskjd sljk sdlj </h6>
+           <p> heyo</p>
+        </div>
+      </div>
+      <hr>
+      <div class="search-result" tabindex=3>
+        <img src="https://www.youtube.com/s/desktop/d743f786/img/favicon_32.png"> 
+        <div class="search-results-content">
+           <h6> Youtube - a place to make great friends and watch really cool content. Potato sdkjsljkds slkdjsldjk slkdjsd dlksjdlksj slkdjsldkjds lskd lsjkdls lskjd sljk sdlj </h6>
+           <p> heyo</p>
+        </div>
+      </div>
+      <div style="display: none"></div>
+    </div>
   </div>
  
 </body>

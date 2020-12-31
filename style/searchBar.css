@@ -1,11 +1,53 @@
-input {
-  width: 100%;
-  height: 2em;
+@import url("//use.fontawesome.com/releases/v5.6.1/css/all.css'");
+
+.search-block img {
+  margin-left: 0.4em;
+  margin-right: 0.4em;
+  width: 1.5em;
+  height: 1.5em;
+  display: inline-block;
+}
+
+.search-block input {
+  width: max-content;
+  vertical-align: middle;
+  margin-left: 1.0em;
+  margin-right: 0.4em;
+  /* margin-top: 0.5em; */
+  height: 2.5em;
   outline: 0;
   border-width: 0 0 1px;
   border-color: transparent;
-  transition: border-color 0.05s ease-in;
 }
-input:focus {
-  /* border-color: blue; */
+
+.search-result {
+  display: flex;
+  align-items:center;
+}
+
+.search-result img {
+  width: 2em;
+  height: 2em;
+  margin-left: 0.4em;
+  margin-right: 0.6em;
+}
+
+hr {
+  margin: 0 !important;
+}
+
+.search-results-content * { 
+  margin: 0 !important;
+}
+
+.search-results-content h6 {
+  padding-top: 0.4em;
+  width: 30ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result.selected {
+  background-color: #1673E0;
 }
