@@ -119,10 +119,12 @@ function registerSearchBarEvents() {
   })
 
   searchContainer.addEventListener("keydown", (e) => {
-    if (e.keyCode == 38) {
+    if (e.keyCode == 38) { // up arrow 
       tabSearchResultsUp();
-    } else if (e.keyCode == 40) {
+    } else if (e.keyCode == 40) { // down arrow
       tabSearchResultsDown();
+    } else if (e.keyCode == 13) { // enter key 
+      doTabAction();
     }
   })
 }
@@ -142,10 +144,8 @@ function tabSearchResultsUp() {
     return;
   }
 
-  // try to move one result up
-  var prev = curr.previousElementSibling.previousElementSibling;
   // we went over the top
-  if (!prev.classList.contains("search-result")) {
+  if (curr.previousElementSibling == null) {
     curr.classList.remove("selected");
 
     var results = searchContainer.querySelectorAll(".search-result");
@@ -155,6 +155,7 @@ function tabSearchResultsUp() {
     var last = results[results.length - 1];
     last.classList.add("selected");
   } else {
+    var prev = curr.previousElementSibling.previousElementSibling;
     curr.classList.remove("selected");
     prev.classList.add("selected");
   }
@@ -173,21 +174,22 @@ function tabSearchResultsDown() {
     result.classList.add("selected");
     return;
   }
-
-  // try to move one result down
-  var next = curr.nextElementSibling.nextElementSibling;
   // we went too low
-  if (!next.classList.contains("search-result")) {
+  if (curr.nextElementSibling == null) {
     curr.classList.remove("selected");
     var result = searchContainer.querySelector(".search-result");
     if (result == null)
       return;
-
     result.classList.add("selected");
   } else {
+    var next = curr.nextElementSibling.nextElementSibling;
     curr.classList.remove("selected");
     next.classList.add("selected");
   }
+}
+
+function doTabAction() {
+
 }
 
 /**
@@ -201,5 +203,42 @@ function updateSearchResults(inital = true, query = "") {
  * Receives response with tab data and renders to screen.
  */
 tabPort.onMessage.addListener((msg) => {
-  console.log("Recieved a message via the tab-info port\n", msg);
+
+  //console.log("Recieved a message via the tab-info port\n", msg.tabs);
+
+  console.log(msg.tabs[0], msg.tabs.length);
+
+  const container = getSearchContainer().getElementById("search-result-container");
+  container.innerHTML = "";
+
+  for (var i = 0; i < msg.tabs.length; i++) {
+    var tab = msg.tabs[i];
+
+    const searchResult = document.createElement("div");
+    searchResult.setAttribute("class", "search-result");
+    searchResult.setAttribute("tabindex", i);
+
+    const icon = document.createElement("img");
+    icon.setAttribute("src", msg.tabs[i].favIconUrl);
+
+    const searchContent = document.createElement("div");
+    searchContent.setAttribute("class", "search-results-content");
+
+    searchContent.innerHTML = "<h6>" + tab.title + "</h6>" + "<p>" + tab.url + "</p>";
+    searchResult.appendChild(icon);
+    searchResult.appendChild(searchContent);
+
+    console.log(searchContent.outerHTML);
+    container.appendChild(searchResult);
+
+    if (i != msg.tabs.length - 1) {
+      const hr = document.createElement("hr");
+      container.appendChild(hr);
+    }
+  }
+
 });
+
+function getSearchContainer() {
+  return document.getElementById(MODAL_ID).shadowRoot;
+}

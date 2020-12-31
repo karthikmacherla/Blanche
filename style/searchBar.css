@@ -38,11 +38,20 @@ hr {
 
 .search-results-content * { 
   margin: 0 !important;
+  padding-bottom: 1mm;
 }
 
 .search-results-content h6 {
   padding-top: 0.4em;
   width: 30ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+}
+
+.search-results-content p {
+  width: 60ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

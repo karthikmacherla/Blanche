@@ -10,7 +10,9 @@
 - Trying to fix icons, styling the search results, 2:00pm - 4:30 pm
 - Finish styling the search results, 3:00am - 4:00am
 - Added keydown functionality, 1:00pm - 3:45pm 
-
+- Render real data, 5:45pm - 
 
 ## Currently Working On ...
 - Add actual functionality to the search bar
+- inconsistent across different sites :(
+- Styles not resetting in the search bar 
