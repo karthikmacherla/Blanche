@@ -189,7 +189,25 @@ function tabSearchResultsDown() {
 }
 
 function doTabAction() {
+  /* 1. Robustness check: check to make sure entering on a selected element */
+  console.log("User pressed enter");
 
+  const container = getSearchContainer();
+  var selectedTab = container.querySelector(".selected");
+  if (selectedTab == null) {
+    return;
+  }
+
+  /* 2. Send a message to background to switch tabs */
+
+  var tabId = selectedTab.getAttribute("tabId");
+  if (tabId == null && parseInt(tabId) == null) {
+    console.log("Tab id was null");
+    return;
+  }
+  tabPort.postMessage({ type: "switch-tabs", tabId: parseInt(tabId) })
+  /* 3. Automatically close the modal */
+  destroyModal();
 }
 
 /**
@@ -203,11 +221,7 @@ function updateSearchResults(inital = true, query = "") {
  * Receives response with tab data and renders to screen.
  */
 tabPort.onMessage.addListener((msg) => {
-
-  //console.log("Recieved a message via the tab-info port\n", msg.tabs);
-
-  console.log(msg.tabs[0], msg.tabs.length);
-
+  // Clear the results container
   const container = getSearchContainer().getElementById("search-result-container");
   container.innerHTML = "";
 
@@ -217,9 +231,10 @@ tabPort.onMessage.addListener((msg) => {
     const searchResult = document.createElement("div");
     searchResult.setAttribute("class", "search-result");
     searchResult.setAttribute("tabindex", i);
+    searchResult.setAttribute("tabId", tab.id);
 
     const icon = document.createElement("img");
-    icon.setAttribute("src", msg.tabs[i].favIconUrl);
+    icon.setAttribute("src", tab.favIconUrl);
 
     const searchContent = document.createElement("div");
     searchContent.setAttribute("class", "search-results-content");
@@ -228,7 +243,6 @@ tabPort.onMessage.addListener((msg) => {
     searchResult.appendChild(icon);
     searchResult.appendChild(searchContent);
 
-    console.log(searchContent.outerHTML);
     container.appendChild(searchResult);
 
     if (i != msg.tabs.length - 1) {
@@ -236,7 +250,6 @@ tabPort.onMessage.addListener((msg) => {
       container.appendChild(hr);
     }
   }
-
 });
 
 function getSearchContainer() {
