@@ -231,7 +231,12 @@ tabPort.onMessage.addListener((msg) => {
     var tab = msg.tabs[i];
 
     const searchResult = document.createElement("div");
-    searchResult.setAttribute("class", "search-result");
+    searchResult.classList.add("search-result");
+
+    if (i == 0) {
+      searchResult.classList.add("selected");
+    }
+
     searchResult.setAttribute("tabindex", i);
     searchResult.setAttribute("tabId", tab.id);
 
