@@ -221,6 +221,8 @@ function updateSearchResults(inital = true, query = "") {
  * Receives response with tab data and renders to screen.
  */
 tabPort.onMessage.addListener((msg) => {
+  console.log(msg);
+
   // Clear the results container
   const container = getSearchContainer().getElementById("search-result-container");
   container.innerHTML = "";

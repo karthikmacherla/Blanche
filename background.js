@@ -21,7 +21,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 
 /**
  * Responses to requests for tab data
- * @relevant request looks like {  }
+ * @relevant request looks like { initial: bool, query: string }
  */
 chrome.runtime.onConnect.addListener(function (port) {
   console.assert(port.name == "tab-info");
@@ -42,11 +42,27 @@ function switchTabs(msg) {
 function sendTabInfo(port, msg) {
   chrome.tabs.getAllInWindow((tabs) => {
     var res;
+    // Send all tab info
     if (msg.initial) {
       res = tabs;
     } else {
-      res = tabs;
+      res = filterTabs(tabs, msg.query);
     }
     port.postMessage({ tabs: res });
   })
+}
+
+
+function filterTabs(tabs, query) {
+  var res = [];
+  query = query.toLowerCase();
+  tabs.forEach(tab => {
+    var title = tab.title.toLowerCase();
+    var url = tab.url.toLowerCase();
+    if (title.includes(query) || url.includes(query)) {
+      res.push(tab);
+    }
+  });
+
+  return res;
 }

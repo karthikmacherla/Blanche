@@ -12,6 +12,8 @@
 - Added keydown functionality, 1:00pm - 3:45pm 
 - Render real data, 6:15pm - 7:00pm 
 - Switch to correct tab on enter, 7:00pm - 7:30pm 
+- Write filter function, 1:30pm - 2:07pm 
+
 
 ## Currently Working On ...
 - Add actual functionality to the search bar
