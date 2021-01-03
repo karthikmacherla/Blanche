@@ -115,7 +115,7 @@ function registerSearchBarEvents() {
   searchBar.addEventListener("input", (e) => {
     var query = searchBar.value;
     console.log("Search value: ", query);
-    updateSearchResults(false, query);
+    updateSearchResults(query);
   })
 
   searchContainer.addEventListener("keydown", (e) => {
@@ -198,23 +198,29 @@ function doTabAction() {
     return;
   }
 
-  /* 2. Send a message to background to switch tabs */
+  /* 2. Send a message to background to switch tabs or open new tab from history */
 
   var tabId = selectedTab.getAttribute("tabId");
-  if (tabId == null && parseInt(tabId) == null) {
-    console.log("Tab id was null");
+  if (tabId != null && parseInt(tabId)) {
+    tabPort.postMessage({ type: "switch-tabs", tabId: parseInt(tabId) })
+    destroyModal();
     return;
   }
-  tabPort.postMessage({ type: "switch-tabs", tabId: parseInt(tabId) })
-  /* 3. Automatically close the modal */
-  destroyModal();
+
+  var historyUrl = selectedTab.getAttribute("historyUrl");
+  if (historyUrl != null) {
+    tabPort.postMessage({ type: "openUrl", url: historyUrl });
+    destroyModal();
+    return;
+  }
+
 }
 
 /**
  * Sends a message to start the chain of updating tab data
  */
-function updateSearchResults(inital = true, query = "") {
-  tabPort.postMessage({ initial: inital, query: query });
+function updateSearchResults(query = "") {
+  tabPort.postMessage({ query: query });
 }
 
 /**
@@ -229,35 +235,74 @@ tabPort.onMessage.addListener((msg) => {
 
   for (var i = 0; i < msg.tabs.length; i++) {
     var tab = msg.tabs[i];
-
-    const searchResult = document.createElement("div");
-    searchResult.classList.add("search-result");
-
-    if (i == 0) {
-      searchResult.classList.add("selected");
-    }
-
-    searchResult.setAttribute("tabindex", i);
-    searchResult.setAttribute("tabId", tab.id);
-
-    const icon = document.createElement("img");
-    icon.setAttribute("src", tab.favIconUrl);
-
-    const searchContent = document.createElement("div");
-    searchContent.setAttribute("class", "search-results-content");
-
-    searchContent.innerHTML = "<h6>" + tab.title + "</h6>" + "<p>" + tab.url + "</p>";
-    searchResult.appendChild(icon);
-    searchResult.appendChild(searchContent);
-
+    var searchResult = createSearchResult(i, tab, true);
     container.appendChild(searchResult);
 
-    if (i != msg.tabs.length - 1) {
+    if (i != msg.tabs.length - 1 || msg.history.length != 0) {
       const hr = document.createElement("hr");
       container.appendChild(hr);
     }
   }
+
+  for (var i = 0; i < msg.history.length; i++) {
+    // cap off at 10 results 
+    if (i + msg.tabs.length >= 10) {
+      break;
+    }
+
+    var hist = msg.history[i];
+    var searchResult = createSearchResult(i + msg.tabs.length, hist, false);
+    container.appendChild(searchResult);
+
+    if (i != msg.history.length - 1) {
+      const hr = document.createElement("hr");
+      container.appendChild(hr);
+    }
+  }
+
 });
+
+/**
+ * Create DOM search result object from tab/history data
+ * @param {*} resultNum : ith location in the search bar
+ * @param {*} data : either tab data or history data
+ * @param {*} isTab : boolean defining if either tab or history
+ */
+function createSearchResult(resultNum, data, isTab) {
+  const searchResult = document.createElement("div");
+  searchResult.classList.add("search-result");
+
+  if (resultNum == 0) {
+    searchResult.classList.add("selected");
+  }
+
+  searchResult.setAttribute("tabindex", resultNum);
+  if (isTab) {
+    searchResult.setAttribute("tabId", data.id);
+  } else {
+    searchResult.setAttribute("historyUrl", data.url);
+  }
+  const icon = document.createElement("img");
+  if (data.favIconUrl)
+    icon.setAttribute("src", data.favIconUrl);
+  else
+    icon.setAttribute("src", "https://www.pinclipart.com/picdir/middle/567-5670540_flame-emoji-png-lit-fire-emoji-png-clipart.png")
+
+  const searchContent = document.createElement("div");
+  searchContent.setAttribute("class", "search-results-content");
+
+  var innerHtml = "<h6>" + data.title + "</h6>" + "<p>" + data.url + "</p>";
+  if (!isTab) {
+    innerHtml = "<h6> Open \"" + data.title + " in new tab </h6><p>" + data.url + "</p>";
+  }
+
+  searchContent.innerHTML = innerHtml;
+  searchResult.appendChild(icon);
+  searchResult.appendChild(searchContent);
+
+  return searchResult;
+
+}
 
 function getSearchContainer() {
   return document.getElementById(MODAL_ID).shadowRoot;

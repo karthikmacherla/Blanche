@@ -28,6 +28,8 @@ chrome.runtime.onConnect.addListener(function (port) {
   port.onMessage.addListener(function (msg) {
     if (msg.type == "switch-tabs") {
       switchTabs(msg);
+    } else if (msg.type == "openUrl") {
+      createNewTab(msg);
     } else {
       sendTabInfo(port, msg);
     }
@@ -39,21 +41,31 @@ function switchTabs(msg) {
   chrome.tabs.update(msg.tabId, { active: true });
 }
 
+function createNewTab(msg) {
+  chrome.tabs.create({ active: true, url: msg.url });
+}
+
 function sendTabInfo(port, msg) {
   chrome.tabs.getAllInWindow((tabs) => {
-    var res;
-    // Send all tab info
-    if (msg.initial) {
-      res = tabs;
-    } else {
-      res = filterTabs(tabs, msg.query);
-    }
-    port.postMessage({ tabs: res });
+    chrome.history.search({ text: "" }, (history) => {
+      var tabRes = filterTabs(tabs, msg.query);
+      var historyRes = filterHistory(history, msg.query);
+
+      port.postMessage({ tabs: tabRes, history: historyRes });
+
+    });
   })
 }
 
-
+/**
+ * Filters tab results based on the query 
+ * @param { [tabs] } tabs 
+ * @param { string } query 
+ */
 function filterTabs(tabs, query) {
+  if (query == "") {
+    return tabs;
+  }
   var res = [];
   query = query.toLowerCase();
   tabs.forEach(tab => {
@@ -63,6 +75,25 @@ function filterTabs(tabs, query) {
       res.push(tab);
     }
   });
+  return res;
+}
 
+/**
+ * Filters history results based on the query
+ * @param { [HistoryResult] } tabs 
+ * @param { string } query 
+ */
+function filterHistory(historyRes, query) {
+  if (query == "")
+    return [];
+  var res = [];
+  query = query.toLowerCase();
+  historyRes.forEach(history => {
+    var title = history.title.toLowerCase();
+    var url = history.url.toLowerCase();
+    if (title.includes(query) || url.includes(query)) {
+      res.push(history);
+    }
+  });
   return res;
 }

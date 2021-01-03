@@ -14,11 +14,11 @@
 - Switch to correct tab on enter, 7:00pm - 7:30pm 
 - Write filter function, 1:30pm - 2:07pm 
 - Highlight first result always, 6:05pm - 6:10pm 
-- 
-
+- Add search results for history, no rendering, 9:22pm - 10:05pm, 
+- Add rendering to screen, 12:48pm - 1:30am
 
 ## Currently Working On ...
-- Add actual functionality to the search bar
-- inconsistent across different sites :(
-- Styles not resetting in the search bar 
+- inconsistent across different sites (partially fixed!!)
 - Change .selected to something more unique
+- add better icons
+- prepare for production
