@@ -1,8 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "Spotlight Search",
-  "description": "Spotlight search for chrome tabs",
+  "name": "Blanche",
+  "description": "A spotlight search extension for chrome",
   "version": "1.0",
+  "icons": {
+    "128": "assets/blanche-logo.png"
+  },
   "permissions": [
     "activeTab",
     "tabs",

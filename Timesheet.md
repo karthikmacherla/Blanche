@@ -18,7 +18,11 @@
 - Add rendering to screen, 12:48pm - 1:30am
 - change .selected, add better icons, 4:29pm - 4:49
 - windows, 3:30pm - 4:00pm
-- logo, readme, 4:00pm - 
+- logo, readme, 4:00pm - 4:45pm
+
 
 ## Production
 - new tab interaction
+
+## Total Time:
+21 hr
