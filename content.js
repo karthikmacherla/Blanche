@@ -1,4 +1,5 @@
 const MODAL_VIEW = "templates/modal.html";
+const DEFAULT_ICON_URL = "assets/box.svg";
 const SEARCHBAR_CSS = "style/searchBar.css";
 const SEARCHBAR_SCRIPT = "searchBar.js";
 const MODAL_ID = "sp-modal-search-container";
@@ -27,6 +28,7 @@ function handleModal() {
     createModal();
   }
 }
+
 
 /**
  * Checks if the modal exists
@@ -132,7 +134,7 @@ function registerSearchBarEvents() {
 function tabSearchResultsUp() {
   const searchContainer = document.getElementById(MODAL_ID).shadowRoot;
 
-  var curr = searchContainer.querySelector(".selected");
+  var curr = searchContainer.querySelector(".sp-selected");
   // Set the bottom to be the selected automatically
   if (curr == null) {
     var results = searchContainer.querySelectorAll(".search-result");
@@ -140,51 +142,51 @@ function tabSearchResultsUp() {
     if (results.length < 1)
       return;
     var last = results[results.length - 1];
-    last.classList.add("selected");
+    last.classList.add("sp-selected");
     return;
   }
 
   // we went over the top
   if (curr.previousElementSibling == null) {
-    curr.classList.remove("selected");
+    curr.classList.remove("sp-selected");
 
     var results = searchContainer.querySelectorAll(".search-result");
 
     if (results.length < 1)
       return;
     var last = results[results.length - 1];
-    last.classList.add("selected");
+    last.classList.add("sp-selected");
   } else {
     var prev = curr.previousElementSibling.previousElementSibling;
-    curr.classList.remove("selected");
-    prev.classList.add("selected");
+    curr.classList.remove("sp-selected");
+    prev.classList.add("sp-selected");
   }
 }
 
 function tabSearchResultsDown() {
   const searchContainer = document.getElementById(MODAL_ID).shadowRoot;
 
-  var curr = searchContainer.querySelector(".selected");
+  var curr = searchContainer.querySelector(".sp-selected");
   // Set the top to be the selected automatically
   if (curr == null) {
     var result = searchContainer.querySelector(".search-result");
     if (result == null)
       return;
 
-    result.classList.add("selected");
+    result.classList.add("sp-selected");
     return;
   }
   // we went too low
   if (curr.nextElementSibling == null) {
-    curr.classList.remove("selected");
+    curr.classList.remove("sp-selected");
     var result = searchContainer.querySelector(".search-result");
     if (result == null)
       return;
-    result.classList.add("selected");
+    result.classList.add("sp-selected");
   } else {
     var next = curr.nextElementSibling.nextElementSibling;
-    curr.classList.remove("selected");
-    next.classList.add("selected");
+    curr.classList.remove("sp-selected");
+    next.classList.add("sp-selected");
   }
 }
 
@@ -193,7 +195,7 @@ function doTabAction() {
   console.log("User pressed enter");
 
   const container = getSearchContainer();
-  var selectedTab = container.querySelector(".selected");
+  var selectedTab = container.querySelector(".sp-selected");
   if (selectedTab == null) {
     return;
   }
@@ -201,8 +203,9 @@ function doTabAction() {
   /* 2. Send a message to background to switch tabs or open new tab from history */
 
   var tabId = selectedTab.getAttribute("tabId");
+  var windowId = selectedTab.getAttribute("windowId");
   if (tabId != null && parseInt(tabId)) {
-    tabPort.postMessage({ type: "switch-tabs", tabId: parseInt(tabId) })
+    tabPort.postMessage({ type: "switch-tabs", tabId: parseInt(tabId), windowId: parseInt(windowId) })
     destroyModal();
     return;
   }
@@ -273,20 +276,23 @@ function createSearchResult(resultNum, data, isTab) {
   searchResult.classList.add("search-result");
 
   if (resultNum == 0) {
-    searchResult.classList.add("selected");
+    searchResult.classList.add("sp-selected");
   }
 
   searchResult.setAttribute("tabindex", resultNum);
   if (isTab) {
     searchResult.setAttribute("tabId", data.id);
+    searchResult.setAttribute("windowId", data.windowId);
   } else {
     searchResult.setAttribute("historyUrl", data.url);
   }
   const icon = document.createElement("img");
   if (data.favIconUrl)
     icon.setAttribute("src", data.favIconUrl);
-  else
-    icon.setAttribute("src", "https://www.pinclipart.com/picdir/middle/567-5670540_flame-emoji-png-lit-fire-emoji-png-clipart.png")
+  else {
+    var url = chrome.runtime.getURL(DEFAULT_ICON_URL);
+    icon.setAttribute("src", url);
+  }
 
   const searchContent = document.createElement("div");
   searchContent.setAttribute("class", "search-results-content");

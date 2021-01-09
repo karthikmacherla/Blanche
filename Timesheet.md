@@ -16,9 +16,9 @@
 - Highlight first result always, 6:05pm - 6:10pm 
 - Add search results for history, no rendering, 9:22pm - 10:05pm, 
 - Add rendering to screen, 12:48pm - 1:30am
+- change .selected, add better icons, 4:29pm - 4:49
+- windows, 3:30pm - 4:00pm
+- logo, readme, 4:00pm - 
 
-## Currently Working On ...
-- inconsistent across different sites (partially fixed!!)
-- Change .selected to something more unique
-- add better icons
-- prepare for production
+## Production
+- new tab interaction

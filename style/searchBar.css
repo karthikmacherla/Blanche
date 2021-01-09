@@ -52,11 +52,12 @@ hr {
 
 .search-results-content p {
   width: 60ch;
+  font-size: medium !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.search-result.selected {
+.search-result.sp-selected {
   background-color: #1673E0;
 }

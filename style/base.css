@@ -1,6 +1,7 @@
 .sp-modal-search-class {
   all: revert;
   font-family: Arial, Helvetica, sans-serif !important;
+  font-size: medium !important;
   color: black !important;
 }
 

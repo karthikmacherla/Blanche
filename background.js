@@ -38,7 +38,9 @@ chrome.runtime.onConnect.addListener(function (port) {
 
 
 function switchTabs(msg) {
-  chrome.tabs.update(msg.tabId, { active: true });
+  chrome.windows.update(msg.windowId, { focused: true }, function (win) {
+    chrome.tabs.update(msg.tabId, { active: true });
+  });
 }
 
 function createNewTab(msg) {
@@ -46,13 +48,12 @@ function createNewTab(msg) {
 }
 
 function sendTabInfo(port, msg) {
-  chrome.tabs.getAllInWindow((tabs) => {
+  chrome.tabs.query({}, (tabs) => {
     chrome.history.search({ text: "" }, (history) => {
       var tabRes = filterTabs(tabs, msg.query);
       var historyRes = filterHistory(history, msg.query);
 
       port.postMessage({ tabs: tabRes, history: historyRes });
-
     });
   })
 }

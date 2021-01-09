@@ -33,7 +33,8 @@
   "web_accessible_resources": [
     "templates/*",
     "style/*",
-    "searchBar.js"
+    "searchBar.js",
+    "assets/*"
   ],
   "commands": {
     "open-search-bar": {
