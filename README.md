@@ -10,7 +10,7 @@
 
 Switch between tabs/windows, open history/bookmarks without ever leaving your keyboard.
 
-![](header.png)
+![](assets/header.png)
 
 ## Installation
 **TBA:** Adding repo to chrome web store. For now...
