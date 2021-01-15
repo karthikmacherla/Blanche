@@ -47,12 +47,12 @@ hr {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
+  font-size: 1em !important;
 }
 
 .search-results-content p {
   width: 60ch;
-  font-size: medium !important;
+  font-size: 0.8em !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
